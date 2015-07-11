@@ -127,7 +127,19 @@ endmacro()
 function(cxx_library_with_type name type cxx_flags)
   # type can be either STATIC or SHARED to denote a static or shared library.
   # ARGN refers to additional arguments after 'cxx_flags'.
-  add_library(${name} ${type} ${ARGN})
+  #add_library(${name} ${type} ${ARGN})
+  if ("${type}" STREQUAL "SHARED")
+    yong_add_library(${name}
+      SOURCES ${ARGN}
+      LIB_TYPE SHARED)
+  elseif ("${type}" STREQUAL "STATIC")
+    yong_add_library(${name}
+      SOURCES ${ARGN}
+      LIB_TYPE STATIC)
+  else()
+    yong_add_library(${name}
+      SOURCES ${ARGN})
+  endif()
   set_target_properties(${name}
     PROPERTIES
     COMPILE_FLAGS "${cxx_flags}")
@@ -139,6 +151,7 @@ function(cxx_library_with_type name type cxx_flags)
   if (CMAKE_USE_PTHREADS_INIT)
     target_link_libraries(${name} ${CMAKE_THREAD_LIBS_INIT})
   endif()
+  yong_add_library_end(${name})
 endfunction()
 
 ########################################################################
